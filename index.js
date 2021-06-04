@@ -40,22 +40,25 @@ app.get('/auth_callback', function (request, response) {
   );
 
   if (request.query.error) {
+    console.log(request.query.error);
     return response.redirect('/');
   } else {
     oauth2Client.getToken(request.query.code, function (err, token) {
       if (err) {
+        console.log(err);
         return response.redirect('/');
       }
       response.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret));
-      return response.redirect('/data');
+      return response.redirect('/query');
     });
   }
 });
 
-app.get('/getYT', async function (request, response) {
+app.get('/getSub', async function (request, response) {
   if (!request.cookies.jwt) {
     return response.redirect('/');
   }
+
   const oauth2Client = new OAuth2(
     CONFIG.oauth2Credentials.client_id,
     CONFIG.oauth2Credentials.client_secret,
@@ -68,7 +71,36 @@ app.get('/getYT', async function (request, response) {
     auth: oauth2Client,
     mine: true,
     part: 'snippet,contentDetails',
+    pageToken: request.query.pageToken,
     maxResults: 50,
   });
-  response.send({ subscriptions: yt.data.items });
+  response.json(yt.data);
 });
+
+// app.get('/getMembers', async function (request, response) {
+//   if (!request.cookies.jwt) {
+//     return response.redirect('/');
+//   }
+
+//   const oauth2Client = new OAuth2(
+//     CONFIG.oauth2Credentials.client_id,
+//     CONFIG.oauth2Credentials.client_secret,
+//     CONFIG.oauth2Credentials.redirect_uris[0]
+//   );
+
+//   oauth2Client.credentials = jwt.verify(request.cookies.jwt, CONFIG.JWTsecret);
+//   const service = google.youtube('v3');
+//   // const yt = await service.members.list({
+//   try {
+//     const yt = await service.sponsors.list({
+//       auth: oauth2Client,
+//       part: 'snippet',
+//       // pageToken: request.query.pageToken,
+//       maxResults: 50,
+//     });
+//     response.json(yt.data);
+//   } catch (err) {
+//     console.log(err);
+//     response.json({ status: 'error' });
+//   }
+// });

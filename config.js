@@ -20,8 +20,11 @@ module.exports = {
     auth_uri: 'https://accounts.google.com/o/oauth2/auth',
     token_uri: 'https://oauth2.googleapis.com/token',
     auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-    client_secret: process.env.YT_CLIENT_SECRET,
+    client_secret: process.env.YT_CLIENTSECRET,
     redirect_uris: [`${baseURL}/auth_callback`],
-    scopes: ['https://www.googleapis.com/auth/youtube.readonly'],
+    scopes: [
+      'https://www.googleapis.com/auth/youtube.readonly',
+      // 'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
+    ],
   },
 };

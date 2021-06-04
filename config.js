@@ -1,8 +1,12 @@
-const port = 3000;
-// const baseURL = `https://youtube-oauth-example.glitch.me`;
-const baseURL = `http://localhost:${port}`;
-
 require('dotenv').config();
+
+const port = 3000;
+let baseURL = `http://localhost:${port}`;
+
+// If we're deployed to glitch
+if (process.env.PROJECT_DOMAIN) {
+  baseURL = `https://${process.env.PROJECT_DOMAIN}.glitch.me`;
+}
 
 module.exports = {
   // The secret for the encryption of the jsonwebtoken

@@ -31,20 +31,23 @@ app.get('/oauth', function (request, response) {
   response.send({ loginLink });
 });
 
-app.get('/auth_callback', function (req, res) {
+app.get('/auth_callback', function (request, response) {
+  console.log('auth_callback');
   const oauth2Client = new OAuth2(
     CONFIG.oauth2Credentials.client_id,
     CONFIG.oauth2Credentials.client_secret,
     CONFIG.oauth2Credentials.redirect_uris[0]
   );
 
-  if (req.query.error) {
-    return res.redirect('/');
+  if (request.query.error) {
+    return response.redirect('/');
   } else {
-    oauth2Client.getToken(req.query.code, function (err, token) {
-      if (err) return res.redirect('/');
-      res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret));
-      return res.redirect('/data');
+    oauth2Client.getToken(request.query.code, function (err, token) {
+      if (err) {
+        return response.redirect('/');
+      }
+      response.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret));
+      return response.redirect('/data');
     });
   }
 });
